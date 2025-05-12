@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sleep Cycle Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #bbbbbb;
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 12px 16px;
+      margin: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+    }
+    input {
+      background-color: #1e1e1e;
+      color: #ffffff;
+    }
+    button {
+      background-color: #03dac6;
+      color: #000000;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00bfa5;
+    }
+    .results {
+      margin-top: 30px;
+      max-width: 600px;
+      text-align: left;
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sleep Cycle Calculator</h1>
+  <p>Find out the best time to go to sleep to wake up refreshed.</p>
+
+  <label for="wake-time">Wake-up Time:</label>
+  <input type="time" id="wake-time">
+  <br>
+
+  <label for="fall-asleep-time">Minutes to Fall Asleep:</label>
+  <input type="number" id="fall-asleep-time" value="15" min="0">
+  <br>
+
+  <button onclick="calculateTimes()">Calculate</button>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    function calculateTimes() {
+      const wakeTime = document.getElementById('wake-time').value;
+      const fallAsleepMinutes = parseInt(document.getElementById('fall-asleep-time').value);
+
+      if (!wakeTime) {
+        alert('Please enter a wake-up time.');
+        return;
+      }
+
+      const [hours, minutes] = wakeTime.split(":").map(Number);
+      const wakeDate = new Date();
+      wakeDate.setHours(hours, minutes, 0, 0);
+
+      const results = [];
+
+      for (let cycles = 6; cycles >= 1; cycles--) {
+        const totalSleepMinutes = cycles * 90 + fallAsleepMinutes;
+        const sleepTime = new Date(wakeDate.getTime() - totalSleepMinutes * 60000);
+
+        const options = { hour: 'numeric', minute: '2-digit' };
+        results.push(`- ${sleepTime.toLocaleTimeString([], options)} (${cycles} cycle${cycles > 1 ? 's' : ''}, ${cycles * 1.5}h of sleep)`);
+      }
+
+      document.getElementById('results').innerHTML = `
+        <h2>To wake up at the end of a sleep cycle, go to sleep at:</h2>
+        <ul>${results.map(r => `<li>${r}</li>`).join('')}</ul>
+      `;
+    }
+  </script>
+</body>
+</html>
